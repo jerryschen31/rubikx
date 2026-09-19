@@ -1,0 +1,43 @@
+name: Rubikx
+options:
+  bundleIdPrefix: com.jerryschen
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+packages:
+  RubikxCore:
+    path: Packages/RubikxCore
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  Rubikx:
+    type: application
+    platform: iOS
+    sources: [Rubikx]
+    dependencies:
+      - package: RubikxCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jerryschen.rubikx
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Rubikx
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+schemes:
+  Rubikx:
+    build:
+      targets:
+        Rubikx: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - package: RubikxCore/RubikxCoreTests
