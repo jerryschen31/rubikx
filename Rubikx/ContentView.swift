@@ -2,11 +2,21 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var model = CubeModel()
+    @State private var debug = TouchDebug()
 
     var body: some View {
         ZStack {
-            CubeView(model: model)
+            CubeView(model: model, debug: debug)
                 .ignoresSafeArea()
+
+            #if DEBUG
+            Text(debug.text)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundStyle(.white.opacity(0.7))
+                .padding(10)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .allowsHitTesting(false)
+            #endif
 
             VStack {
                 if model.justSolved {
@@ -44,9 +54,10 @@ struct ContentView: View {
 
 struct CubeView: UIViewRepresentable {
     let model: CubeModel
+    let debug: TouchDebug
 
     func makeUIView(context: Context) -> CubeARView {
-        CubeARView(model: model)
+        CubeARView(model: model, debug: debug)
     }
 
     func updateUIView(_ view: CubeARView, context: Context) {}

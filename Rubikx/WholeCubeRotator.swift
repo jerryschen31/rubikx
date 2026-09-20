@@ -8,7 +8,7 @@ import simd
 /// square-on, the way a layer settles into a quarter turn, so the front, top and right faces
 /// always face the user.
 @MainActor
-final class WholeCubeRotator {
+final class WholeCubeRotator: WholeCubeTurning {
     private let cubeRoot: Entity
     /// The camera's world orientation, for converting screen drags into world rotations.
     private let cameraOrientation: () -> simd_quatf

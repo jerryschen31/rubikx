@@ -7,7 +7,7 @@ import RubikxCore
 /// Only one axis can be off-grid at a time, as on a real cube. Any number of layers on that axis
 /// can turn at once, each with its own angle.
 @MainActor
-final class TurnEngine {
+final class TurnEngine: LayerTurning {
     private struct LayerTurn {
         var angle: Double = 0
         var spring: LayerSpring?
@@ -57,6 +57,9 @@ final class TurnEngine {
     /// Highlights the layer a long-press grips, or clears it when `axis` is nil.
     func showGrip(axis: Axis?, layer: Int) {
         scene.setGrip(axis: axis, layer: layer, state: model.state)
+        if axis != nil {
+            Haptics.grip()
+        }
     }
 
     // MARK: - Finger-driven turns
@@ -78,6 +81,7 @@ final class TurnEngine {
         layers[layer]!.samples = [(time, layers[layer]!.angle)]
         layers[layer]!.detent = LayerSpring.quarterTurns(for: layers[layer]!.angle)
         scene.setHighlighted(true, layer: layer)
+        Haptics.grab()
         return layers[layer]!.angle
     }
 

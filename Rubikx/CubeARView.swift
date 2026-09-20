@@ -10,6 +10,7 @@ import UIKit
 @MainActor
 final class CubeARView: ARView, CubeCommands {
     private let model: CubeModel
+    private let debug: TouchDebug
     private let cubeScene: CubeScene
     private let engine: TurnEngine
     private var rotator: WholeCubeRotator!
@@ -26,8 +27,9 @@ final class CubeARView: ARView, CubeCommands {
     /// Fraction of the screen's shorter side the cube's outline spans.
     static let screenFill: Float = 0.7
 
-    init(model: CubeModel) {
+    init(model: CubeModel, debug: TouchDebug) {
         self.model = model
+        self.debug = debug
         cubeScene = CubeScene(state: model.state)
         engine = TurnEngine(scene: cubeScene, model: model)
         super.init(frame: .zero, cameraMode: .nonAR, automaticallyConfigureSession: false)
@@ -36,7 +38,7 @@ final class CubeARView: ARView, CubeCommands {
             camera.orientation(relativeTo: nil)
         }
         touchController = TouchController(
-            engine: engine,
+            turner: engine,
             rotator: rotator,
             faceDrag: { [unowned self] in faceDrag(at: $0) },
             projection: { [unowned self] in projection() },
@@ -67,6 +69,9 @@ final class CubeARView: ARView, CubeCommands {
                 self?.touchController.update(now: ProcessInfo.processInfo.systemUptime)
                 self?.engine.update(dt)
                 self?.rotator.update(dt)
+                #if DEBUG
+                self?.showTouchState()
+                #endif
             }
         }
     }
@@ -108,6 +113,17 @@ final class CubeARView: ARView, CubeCommands {
         }
         camera.look(at: .zero, from: back * distance, relativeTo: nil)
     }
+
+    #if DEBUG
+    /// Mirrors the touch controller's state into the on-screen readout.
+    private func showTouchState() {
+        let lines = [touchController.summary] + touchController.log
+        let text = lines.joined(separator: "\n")
+        if text != debug.text {
+            debug.text = text
+        }
+    }
+    #endif
 
     // MARK: - Hit testing
 
@@ -155,6 +171,7 @@ final class CubeARView: ARView, CubeCommands {
     // MARK: - Touches
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        Haptics.prepare()
         touchController.began(samples(touches))
     }
 
